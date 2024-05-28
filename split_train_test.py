@@ -37,26 +37,28 @@ class KFoldPerSubjectCrossTrialMultiSession(KFoldPerSubjectCrossTrial):
                 test_trial_ids = np.array(
                         trial_ids)[test_index_trial_ids].tolist()
 
-                train_info = []
-                for train_trial_id in train_trial_ids:
-                    train_info.append(subject_info[subject_info['trial_id'] ==
-                                                   train_trial_id])
-                train_info = pd.concat(train_info, ignore_index=True)
+                for session_id in range(1, 4):
+                    train_info = []
+                    test_info = []
+                    for train_trial_id in train_trial_ids:
+                        train_info.append(subject_info[(subject_info['trial_id'] == train_trial_id) &
+                                                       (subject_info['session_id'] == session_id)])
+                    train_info = pd.concat(train_info, ignore_index=True)
 
-                test_info = []
-                for test_trial_id in test_trial_ids:
-                    test_info.append(
-                            subject_info[subject_info['trial_id'] == test_trial_id])
-                test_info = pd.concat(test_info, ignore_index=True)
+                    for test_trial_id in test_trial_ids:
+                        test_info.append(
+                                subject_info[(subject_info['trial_id'] == test_trial_id) &
+                                             (subject_info['session_id'] == session_id)])
+                    test_info = pd.concat(test_info, ignore_index=True)
 
-                train_info.to_csv(os.path.join(
-                        self.split_path,
-                        f'train_subject_{subject}_fold_{fold_id}.csv'),
-                        index=False)
-                test_info.to_csv(os.path.join(
-                        self.split_path,
-                        f'test_subject_{subject}_fold_{fold_id}.csv'),
-                        index=False)
+                    train_info.to_csv(os.path.join(
+                            self.split_path,
+                            f'train_subject_{subject}_fold_{session_id - 1}.csv'),
+                            index=False)
+                    test_info.to_csv(os.path.join(
+                            self.split_path,
+                            f'test_subject_{subject}_fold_{session_id - 1}.csv'),
+                            index=False)
     def split(
             self,
             dataset: BaseDataset,

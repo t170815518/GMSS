@@ -12,11 +12,9 @@ from split_train_test import *
 
 
 dataset = SEEDIVFeatureDataset(root_path='./SEED_IV/eeg_feature_smooth',
-                        feature=['de_movingAve'],
+                        feature=['de_movingAve'],  # 或者改成de_LDS
                         label_transform=transforms.Select(key='emotion'),
-                                  online_transform=transforms.ToTensor(),
-
-                               io_path='.torcheeg\datasets_1716810209183_d2dSj'
+                                  online_transform=transforms.ToTensor()
                                )
 print(dataset[0])
 
@@ -32,8 +30,8 @@ for i, (train_dataset, test_dataset) in tqdm(enumerate(cv.split(dataset))):
         train_labels.append(sample[1].numpy())
     train_features = np.vstack(train_features)
     train_labels = np.concatenate(train_labels)
-    np.save(f'train_dataset_{cv.subjects[i]}.npy', train_features)
-    np.save(f'train_labelset_{cv.subjects[i]}.npy', train_labels)
+    np.save(f'train_dataset_{i}.npy', train_features)
+    np.save(f'train_labelset_{i}.npy', train_labels)
 
     test_features = []
     test_labels = []
@@ -42,5 +40,5 @@ for i, (train_dataset, test_dataset) in tqdm(enumerate(cv.split(dataset))):
         test_labels.append(sample[1].numpy())
     test_features = np.vstack(test_features)
     test_labels = np.concatenate(test_labels)
-    np.save(f'test_dataset_{cv.subjects[i]}.npy', test_features)
-    np.save(f'test_labelset_{cv.subjects[i]}.npy', test_labels)
+    np.save(f'test_dataset_{i}.npy', test_features)
+    np.save(f'test_labelset_{i}.npy', test_labels)
