@@ -11,9 +11,11 @@ import time
 import os
 import pdb
 
-path = '/GNN_NPY_DATASETS/SEED/data_dependent'
-# path = '/GNN_NPY_DATASETS/MPED/data_dependent'
-# path = '/GNN_NPY_DATASETS/SEED/data_independent'
+path = 'processed_data'
+# PATH = '/GNN_NPY_DATASETS/MPED/data_dependent'
+# PATH = '/GNN_NPY_DATASETS/SEED/data_independent'
+DATASET = 'SEED_IV'
+
 batch_size = config.batch_size
 epochs = config.epochs
 lr = config.lr
@@ -21,7 +23,6 @@ weight_decay = config.weight_decay
 device = config.device
 num_jigsaw = config.num_jigsaw
 DATASETS = ['SEED', 'SEED_IV', 'MPED']
-DATASET = path.strip().split('/')[-2]
 assert DATASET in DATASETS
 DEPENDENT = path.strip().split('/')[-1]
 if DEPENDENT == 'data_independent':
@@ -129,9 +130,9 @@ def train(train_data, train_label, test_data, test_label, people):
 
     HC = None
 
-    if 'SEED_IV' in path:
+    if 'SEED_IV' in path or DATASET == 'SEED_IV':
         HC = 4
-    elif 'MPED' in path:
+    elif 'MPED' in path or DATASET == 'MPED':
         HC = 7
     else:
         HC = 3
@@ -192,7 +193,7 @@ def train(train_data, train_label, test_data, test_label, people):
         denominator = (ind+1)*batch_size
         
         if epoch%5==0:   
-            torch.save(net.state_dict(), f'unsupervisedDirectory/pretrain/{DATASET}_checkpoint/checkpoint_{people}.pkl')
+            torch.save(net.state_dict(), f'cv /pretrain/{DATASET}_checkpoint/checkpoint_{people}.pkl')
             validateTrain(train_data, train_label, test_data, test_label, people, HC)
 
         print(f'Epoch [{epoch}/{epochs}] \n'

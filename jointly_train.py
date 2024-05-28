@@ -10,10 +10,12 @@ import os
 from itertools import cycle
 import time
 import pdb
+from tqdm.auto import tqdm
 
-path = '/GNN_NPY_DATASETS/SEED/data_dependent'
-# path = '/GNN_NPY_DATASETS/MPED/data_dependent'
-# path = '/GNN_NPY_DATASETS/SEED/data_independent'
+PATH = 'processed_data'
+DATASET = 'SEED_IV'
+# PATH = '/GNN_NPY_DATASETS/MPED/data_dependent'
+# PATH = '/GNN_NPY_DATASETS/SEED/data_independent'
 batch_size = config.batch_size
 epochs = config.epochs
 lr = config.lr
@@ -21,9 +23,8 @@ weight_decay = config.weight_decay
 device = config.device
 num_jigsaw = config.num_jigsaw
 DATASETS = ['SEED', 'SEED_IV', 'MPED']
-DATASET = path.strip().split('/')[-2]
 assert DATASET in DATASETS
-DEPENDENT = path.strip().split('/')[-1]
+DEPENDENT = PATH.strip().split('/')[-1]
 if DEPENDENT == 'data_independent':
     DATASET = DATASET+'_'+DEPENDENT
 
@@ -116,7 +117,7 @@ def train(train_data, train_label, test_data, test_label, people):
     train_loader1 = create_contrastive(fre_stack, spa_stack, train_data.copy(), timeseed, shuffle=True, batch_size=batch_size, num_jigsaw=num_jigsaw)
     train_loader2 = create_contrastive(fre_stack, spa_stack, train_data.copy(), timeseed, shuffle=True, batch_size=batch_size,  num_jigsaw=num_jigsaw)
 
-    for epoch in range(epochs):
+    for epoch in tqdm(range(epochs)):
 
         loader = zip(floader, sloader, cycle(gloader), train_loader1, train_loader2)
 
@@ -175,10 +176,10 @@ def train(train_data, train_label, test_data, test_label, people):
 
 def runs(people):
     print(f'load object {people}\'s data.....')
-    train_data = np.load(path + '/' + 'train_dataset_{}.npy'.format(people))
-    train_label = np.load(path + '/' + 'train_labelset_{}.npy'.format(people))
-    test_data = np.load(path + '/' + 'test_dataset_{}.npy'.format(people))
-    test_label = np.load(path + '/' + 'test_labelset_{}.npy'.format(people))
+    train_data = np.load(PATH + '/' + 'train_dataset_{}.npy'.format(people))
+    train_label = np.load(PATH + '/' + 'train_labelset_{}.npy'.format(people))
+    test_data = np.load(PATH + '/' + 'test_dataset_{}.npy'.format(people))
+    test_label = np.load(PATH + '/' + 'test_labelset_{}.npy'.format(people))
     print('loaded!')
 
     train(train_data, train_label, test_data, test_label, people)
